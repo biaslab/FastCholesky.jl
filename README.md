@@ -6,3 +6,5 @@
 [![Coverage](https://codecov.io/gh/biaslab/FastCholesky.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/biaslab/FastCholesky.jl)
 [![Code Style: Blue](https://img.shields.io/badge/code%20style-blue-4495d1.svg)](https://github.com/invenia/BlueStyle)
 [![PkgEval](https://JuliaCI.github.io/NanosoldierReports/pkgeval_badges/F/FastCholesky.svg)](https://JuliaCI.github.io/NanosoldierReports/pkgeval_badges/F/FastCholesky.html)
+
+This package exports `fastcholesky` function, which works exactly like the `cholesky` from the Julia, but faster!

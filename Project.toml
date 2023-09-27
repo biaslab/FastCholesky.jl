@@ -1,7 +1,11 @@
 name = "FastCholesky"
 uuid = "2d5283b6-8564-42b6-bb00-83ed8e915756"
-authors = ["Bagaev Dmitry <bvdmitri@gmail.com> and contributors"]
-version = "1.0.0-DEV"
+authors = ["Bart van Erp <b.v.erp@tue.nl>, Bagaev Dmitry <d.v.bagaev@tue.nl> and contributors"]
+version = "1.0.0"
+
+[deps]
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+PositiveFactorizations = "85a6dd25-e78a-55b7-8502-1745935b8125"
 
 [compat]
 julia = "1"
