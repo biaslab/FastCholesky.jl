@@ -1,0 +1,13 @@
+name = "FastCholesky"
+uuid = "2d5283b6-8564-42b6-bb00-83ed8e915756"
+authors = ["Bagaev Dmitry <bvdmitri@gmail.com> and contributors"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
