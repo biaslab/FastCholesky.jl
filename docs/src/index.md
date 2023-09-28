@@ -4,7 +4,7 @@ CurrentModule = FastCholesky
 
 # FastCholesky
 
-Documentation for [FastCholesky](https://github.com/biaslab/FastCholesky.jl).
+This package exports `fastcholesky` function, which works exactly like the `cholesky` from the Julia, but faster!
 
 ```@index
 ```

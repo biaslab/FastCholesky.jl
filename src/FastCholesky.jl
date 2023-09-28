@@ -13,6 +13,15 @@ export fastcholesky, fastcholesky!, cholinv, cholsqrt, chollogdet, cholinv_logde
 Returns the `Cholesky` factorization of the `input` in the same format as `LinearAlgebra.cholesky`.
 By default fallbacks to `LinearAlgebra.cholesky(PositiveFactorizations.Positive, input)`, thus does not requires the input to be perfectly symmetric. 
 Provides more efficient implementations for certain inputs.
+
+```jldoctest 
+julia> fastcholesky([ 1.0 0.5; 0.5 1.0 ])
+Cholesky{Float64, Matrix{Float64}}
+L factor:
+2×2 LowerTriangular{Float64, Matrix{Float64}}:
+ 1.0   ⋅ 
+ 0.5  0.866025
+```
 """
 function fastcholesky(input::AbstractMatrix)
     return cholesky(PositiveFactorizations.Positive, Hermitian(input))
@@ -42,6 +51,15 @@ end
 
 In-place version of the `fastcholesky`. Does not check the positive-definiteness of the `input` and does not throw. 
 Use `LinearAlgebra.issuccess` to check if the result is a proper Cholesky factorization.
+
+```jldoctest 
+julia> fastcholesky!([ 1.0 0.5; 0.5 1.0 ])
+Cholesky{Float64, Matrix{Float64}}
+L factor:
+2×2 LowerTriangular{Float64, Matrix{Float64}}:
+ 1.0   ⋅ 
+ 0.5  0.866025
+```
 """
 function fastcholesky! end
 
