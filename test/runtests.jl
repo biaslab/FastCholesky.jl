@@ -26,7 +26,7 @@ end
 @testset "FastCholesky.jl" begin
 
     # General properties
-    for size in 1:20:100
+    for size in 1:20:1000
         for input in make_rand_inputs(size)
 
             # We check only posdef inputs
