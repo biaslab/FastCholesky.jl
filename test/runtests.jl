@@ -4,9 +4,9 @@ using LinearAlgebra
 using StaticArrays
 
 make_rand_diagonal(size::Number) = Diagonal(10rand(size))
-make_rand_posdef(size::Number) = make_rand_posdef(make_rand_lowertriangular(size))
-make_rand_hermitian(size::Number) = Hermitian(make_rand_posdef(size))
-make_rand_posdef(L::LowerTriangular) = L * L' + size(L, 1) * I
+make_rand_posdef(size::Number) = collect(make_rand_hermitian(size))
+make_rand_hermitian(size::Number) = make_rand_hermitian(make_rand_lowertriangular(size))
+make_rand_hermitian(L::LowerTriangular) = Hermitian(L * L' + (size(L, 1) + 1) * I)
 make_rand_lowertriangular(size) = LowerTriangular(10rand(size, size))
 
 function make_rand_inputs(size)
@@ -53,7 +53,7 @@ end
     @test_throws ErrorException fastcholesky!(I)
 
     # The functions should work on numbers
-    @testset let number = rand()
+    let number = rand()
         @test fastcholesky(number) === number
         @test cholinv(number) ≈ inv(number)
         @test cholsqrt(number) ≈ sqrt(number)
