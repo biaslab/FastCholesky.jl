@@ -19,7 +19,7 @@ By default, it falls back to using `LinearAlgebra.cholesky(PositiveFactorization
     to the matrix to ensure it becomes positive definite. Note that the magnitude of these adjustments may not necessarily be small, so it's important to use 
     this function only when you expect the input matrix to be nearly positive definite.
     
-```jldoctest 
+```jldoctest; setup = :(using FastCholesky, LinearAlgebra)
 julia> C = fastcholesky([ 1.0 0.5; 0.5 1.0 ]);
 
 julia> C.L * C.L' ≈ [ 1.0 0.5; 0.5 1.0 ]
@@ -58,7 +58,7 @@ and it does not check the positive-definiteness of the input matrix or throw err
 !!! note
     This function does not verify the positive-definiteness of the input matrix and does not throw errors. Ensure that the input matrix is appropriate for Cholesky factorization before using this function.
 
-```jldoctest 
+```jldoctest; setup = :(using FastCholesky, LinearAlgebra)
 julia> C = fastcholesky!([ 1.0 0.5; 0.5 1.0 ]);
 
 julia> C.L * C.L' ≈ [ 1.0 0.5; 0.5 1.0 ]
@@ -99,7 +99,7 @@ end
 
 Calculate the inverse of the input matrix `input` using Cholesky factorization. This function is an alias for `inv(fastcholesky(input))`.
 
-```jldoctest
+```jldoctest; setup = :(using FastCholesky, LinearAlgebra)
 julia> A = [4.0 2.0; 2.0 5.0];
 
 julia> A_inv = cholinv(A);
@@ -145,7 +145,7 @@ cholsqrt(input::Number) = sqrt(input)
 
 Calculate the log-determinant of the input matrix `input` using Cholesky factorization. This function is an alias for `logdet(fastcholesky(input))`.
 
-```jldoctest
+```jldoctest; setup = :(using FastCholesky, LinearAlgebra)
 julia> A = [4.0 2.0; 2.0 5.0];
 
 julia> logdet_A = chollogdet(A);
@@ -165,7 +165,7 @@ chollogdet(input::Number) = logdet(input)
 
 Calculate the inverse and the natural logarithm of the determinant of the input matrix `input` simultaneously using Cholesky factorization.
 
-```julia
+```jldoctest; setup = :(using FastCholesky, LinearAlgebra)
 julia> A = [4.0 2.0; 2.0 5.0];
 
 julia> A_inv, logdet_A = cholinv_logdet(A);
