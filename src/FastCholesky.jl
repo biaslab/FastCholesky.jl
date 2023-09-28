@@ -10,10 +10,15 @@ export fastcholesky, fastcholesky!, cholinv, cholsqrt, chollogdet, cholinv_logde
 """
     fastcholesky(input)
 
-Returns the `Cholesky` factorization of the `input` in the same format as `LinearAlgebra.cholesky`.
-By default fallbacks to `LinearAlgebra.cholesky(PositiveFactorizations.Positive, input)`, thus does not requires the input to be perfectly symmetric. 
-Provides more efficient implementations for certain inputs.
+Calculate the Cholesky factorization of the input matrix `input`. 
+This function provides a more efficient implementation for certain input matrices compared to the standard `LinearAlgebra.cholesky` function. 
+By default, it falls back to using `LinearAlgebra.cholesky(PositiveFactorizations.Positive, input)`, which means it does not require the input matrix to be perfectly symmetric.
 
+!!! note 
+    This function assumes that the input matrix is nearly positive definite, and it will attempt to make the smallest possible adjustments 
+    to the matrix to ensure it becomes positive definite. Note that the magnitude of these adjustments may not necessarily be small, so it's important to use 
+    this function only when you expect the input matrix to be nearly positive definite.
+    
 ```jldoctest 
 julia> C = fastcholesky([ 1.0 0.5; 0.5 1.0 ]);
 
@@ -47,11 +52,14 @@ end
 """
     fastcholesky!(input)
 
-In-place version of the `fastcholesky`. Does not check the positive-definiteness of the `input` and does not throw. 
-Use `LinearAlgebra.issuccess` to check if the result is a proper Cholesky factorization.
+Calculate the Cholesky factorization of the input matrix `input` in-place. This function is an in-place version of `fastcholesky`, 
+and it does not check the positive-definiteness of the input matrix or throw errors. You can use `LinearAlgebra.issuccess` to check if the result is a proper Cholesky factorization.
+
+!!! note
+    This function does not verify the positive-definiteness of the input matrix and does not throw errors. Ensure that the input matrix is appropriate for Cholesky factorization before using this function.
 
 ```jldoctest 
-julia> C = fastcholesky([ 1.0 0.5; 0.5 1.0 ]);
+julia> C = fastcholesky!([ 1.0 0.5; 0.5 1.0 ]);
 
 julia> C.L * C.L' ≈ [ 1.0 0.5; 0.5 1.0 ]
 true
@@ -89,8 +97,16 @@ end
 """
     cholinv(input)
 
-Returns an inverse of the `input`, but uses the Cholesky factorization.
-An alias for `inv(fastcholesky(input))`. 
+Calculate the inverse of the input matrix `input` using Cholesky factorization. This function is an alias for `inv(fastcholesky(input))`.
+
+```jldoctest
+julia> A = [4.0 2.0; 2.0 5.0];
+
+julia> A_inv = cholinv(A);
+
+julia> A_inv ≈ inv(A)
+true
+```
 """
 cholinv(input::AbstractMatrix) = inv(fastcholesky(input))
 
@@ -107,8 +123,16 @@ end
 """
     cholsqrt(input)
 
-Returns an squared root of the matrix `input`, but uses the Cholesky factorization.
-An alias for `fastcholesky(x).L`.
+Calculate the square root of the input matrix `input` using Cholesky factorization. This function is an alias for `fastcholesky(input).L`.
+
+```jldoctest 
+julia> A = [4.0 2.0; 2.0 5.0];
+
+julia> A_sqrt = cholsqrt(A);
+
+julia> isapprox(A_sqrt * A_sqrt', A)
+true
+```
 """
 cholsqrt(input) = fastcholesky(input).L
 
@@ -117,10 +141,18 @@ cholsqrt(input::Diagonal) = Diagonal(sqrt.(diag(input)))
 cholsqrt(input::Number) = sqrt(input)
 
 """
-    cholsqrt(input)
+    chollogdet(input)
 
-Returns a log-determinant of the matrix `input`, but uses the Cholesky factorization.
-An alias for `logdet(fastcholesky(input))`.
+Calculate the log-determinant of the input matrix `input` using Cholesky factorization. This function is an alias for `logdet(fastcholesky(input))`.
+
+```jldoctest
+julia> A = [4.0 2.0; 2.0 5.0];
+
+julia> logdet_A = chollogdet(A);
+
+julia> isapprox(logdet_A, log(det(A)))
+true
+```
 """
 chollogdet(input) = logdet(fastcholesky(input))
 
@@ -131,7 +163,19 @@ chollogdet(input::Number) = logdet(input)
 """
     cholinv_logdet(input)
 
-Returns an inverse and a log-determinant of the matrix `input` simultaneously, but uses the Cholesky factorization.
+Calculate the inverse and the natural logarithm of the determinant of the input matrix `input` simultaneously using Cholesky factorization.
+
+```julia
+julia> A = [4.0 2.0; 2.0 5.0];
+
+julia> A_inv, logdet_A = cholinv_logdet(A);
+
+julia> isapprox(A_inv * A, I)
+true
+
+julia> isapprox(logdet_A, log(det(A)))
+true
+```
 """
 function cholinv_logdet(input)
     C = fastcholesky(input)
