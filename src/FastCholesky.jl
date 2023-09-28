@@ -15,12 +15,10 @@ By default fallbacks to `LinearAlgebra.cholesky(PositiveFactorizations.Positive,
 Provides more efficient implementations for certain inputs.
 
 ```jldoctest 
-julia> fastcholesky([ 1.0 0.5; 0.5 1.0 ])
-Cholesky{Float64, Matrix{Float64}}
-L factor:
-2×2 LowerTriangular{Float64, Matrix{Float64}}:
- 1.0   ⋅ 
- 0.5  0.866025
+julia> C = fastcholesky([ 1.0 0.5; 0.5 1.0 ]);
+
+julia> C.L * C.L' ≈ [ 1.0 0.5; 0.5 1.0 ]
+true
 ```
 """
 function fastcholesky(input::AbstractMatrix)
@@ -53,12 +51,10 @@ In-place version of the `fastcholesky`. Does not check the positive-definiteness
 Use `LinearAlgebra.issuccess` to check if the result is a proper Cholesky factorization.
 
 ```jldoctest 
-julia> fastcholesky!([ 1.0 0.5; 0.5 1.0 ])
-Cholesky{Float64, Matrix{Float64}}
-L factor:
-2×2 LowerTriangular{Float64, Matrix{Float64}}:
- 1.0   ⋅ 
- 0.5  0.866025
+julia> C = fastcholesky([ 1.0 0.5; 0.5 1.0 ]);
+
+julia> C.L * C.L' ≈ [ 1.0 0.5; 0.5 1.0 ]
+true
 ```
 """
 function fastcholesky! end
