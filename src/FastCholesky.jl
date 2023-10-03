@@ -27,7 +27,10 @@ true
 ```
 """
 function fastcholesky(input::AbstractMatrix)
-    return cholesky(PositiveFactorizations.Positive, Hermitian(input))
+    # The `tol` argument here is tricky, it basically defines the threshold for a diagonal entry to be zero
+    # The `PositiveFactorizations` replaces zero diagonal entries under the hood and simply uses `1` instead
+    # The `PositiveFactorizations.default_δ` should small enough in majority of the cases
+    return cholesky(PositiveFactorizations.Positive, Hermitian(input), tol = PositiveFactorizations.default_δ(input))
 end
 fastcholesky(input::Diagonal) = cholesky(input)
 fastcholesky(input::Hermitian) = cholesky(PositiveFactorizations.Positive, input)
