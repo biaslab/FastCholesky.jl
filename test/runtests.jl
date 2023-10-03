@@ -69,4 +69,16 @@ end
         @test chollogdet(number) ≈ logdet(number)
         @test all(cholinv_logdet(number) .≈ (inv(number), logdet(number)))
     end
+
+    @testset "special case #1 (found in ExponentialFamily.jl)" begin
+        # This is a very bad matrix, but should be solveable
+        F = [
+            42491.1429254459 1.0544416413649244e6 64.9016820609457 1712.2779951809016
+            1.0544416413649244e6 2.616823794441869e7 1610.468694700484 42488.422800411565
+            64.9016820609457 1610.468694700484 0.10421453600353446 2.6155294717625517
+            1712.2779951809016 42488.422800411565 2.6155294717625517 69.0045838263577
+        ]
+        @test inv(fastcholesky(F)) * F ≈ Diagonal(ones(4)) rtol=1e-4
+        @test fastcholesky(F).L ≈ cholesky(F).L
+    end
 end
