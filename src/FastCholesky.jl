@@ -196,4 +196,9 @@ cholinv_logdet(input::UniformScaling) = inv(input), logdet(input)
 cholinv_logdet(input::Diagonal) = inv(input), logdet(input)
 cholinv_logdet(input::Number) = inv(input), log(abs(input))
 
+# Extensions 
+@static if !isdefined(Base, :get_extension)
+    include("../ext/StaticArraysCoreExt.jl")
+end
+
 end

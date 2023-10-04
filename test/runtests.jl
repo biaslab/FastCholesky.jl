@@ -2,6 +2,7 @@ using FastCholesky
 using Test
 using LinearAlgebra
 using StaticArrays
+using StaticArraysCore
 
 make_rand_diagonal(size::Number) = Diagonal(10rand(size))
 make_rand_posdef(size::Number) = collect(make_rand_hermitian(size))
@@ -45,6 +46,9 @@ end
                 @test all(cholinv_logdet(input) .≈ (inv(input), logdet(input)))
                 @test cholsqrt(input) * cholsqrt(input)' ≈ sqrt(input) * sqrt(input)'
                 @test cholsqrt(input) * cholsqrt(input)' ≈ input
+
+                # Check that we do not lose the static type in the process for example
+                @test typeof(cholesky(input)) === typeof(fastcholesky(input))
             end
         end
 
