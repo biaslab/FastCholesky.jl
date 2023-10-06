@@ -117,7 +117,7 @@ cholinv(input::UniformScaling) = inv(input.λ) * I
 cholinv(input::Diagonal) = inv(input)
 cholinv(input::Number) = inv(input)
 
-function cholinv(input::Matrix{<:AbstractFloat})
+function cholinv(input::Matrix{<:BlasFloat})
     C = fastcholesky(input)
     LinearAlgebra.inv!(C)
     return C.factors
@@ -185,7 +185,7 @@ function cholinv_logdet(input)
     return inv(C), logdet(C)
 end
 
-function cholinv_logdet(input::Matrix{<:AbstractFloat})
+function cholinv_logdet(input::Matrix{<:BlasFloat})
     C = fastcholesky(input)
     lC = logdet(C)
     LinearAlgebra.inv!(C)
