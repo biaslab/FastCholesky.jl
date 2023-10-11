@@ -8,3 +8,8 @@
 [![PkgEval](https://JuliaCI.github.io/NanosoldierReports/pkgeval_badges/F/FastCholesky.svg)](https://JuliaCI.github.io/NanosoldierReports/pkgeval_badges/F/FastCholesky.html)
 
 This package exports `fastcholesky` function, which works exactly like the `cholesky` from the Julia, but faster!
+
+
+# License
+
+[MIT License](LICENSE) Copyright (c) 2021-2023 BIASlab
