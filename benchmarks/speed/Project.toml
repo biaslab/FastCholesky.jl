@@ -1,4 +1,5 @@
 [deps]
 BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 FastCholesky = "2d5283b6-8564-42b6-bb00-83ed8e915756"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 PkgBenchmark = "32113eaa-f34f-5b0d-bd6c-c81e245fc73d"
