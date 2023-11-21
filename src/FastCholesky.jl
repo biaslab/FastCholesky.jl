@@ -35,17 +35,10 @@ end
 fastcholesky(input::Diagonal) = cholesky(input)
 fastcholesky(input::Hermitian) = cholesky(PositiveFactorizations.Positive, input)
 fastcholesky(input::Number) = input
+fastcholesky!(input::Number) = input
 
-function fastcholesky(x::UniformScaling)
-    return error(
-        "`fastcholesky` is not defined for `UniformScaling`. The shape is not determined."
-    )
-end
-function fastcholesky!(x::UniformScaling)
-    return error(
-        "`fastcholesky!` is not defined for `UniformScaling`. The shape is not determined."
-    )
-end
+fastcholesky(x::UniformScaling) = sqrt(x.λ) * I
+fastcholesky!(x::UniformScaling) = sqrt(x.λ) * I
 
 function fastcholesky(input::Matrix{<:BlasFloat})
     C = fastcholesky!(copy(input))
