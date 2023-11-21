@@ -6,7 +6,7 @@ const SUITE = BenchmarkGroup()
 # general benchmarks
 for T in (Float32, Float64, BigFloat)
 
-    for dim in (2, 5, 10)#, 20, 50, 100, 200, 500)
+    for dim in (2, 5, 10, 20, 50, 100, 200, 500)
 
         # generate positive-definite matrix of specified dimensions
         A = randn(dim, dim)
