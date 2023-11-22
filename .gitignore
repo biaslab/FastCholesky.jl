@@ -7,4 +7,4 @@ Manifest.toml
 
 .vscode
 benchmark
-exports
+benchmarks/**/exports
