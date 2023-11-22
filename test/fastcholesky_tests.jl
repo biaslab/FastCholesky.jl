@@ -59,8 +59,8 @@ end
         @test chollogdet(I) ≈ zero
         @test all(cholinv_logdet(one * I) .≈ (one * I, zero))
         @test_throws ArgumentError chollogdet(two * I)
-        @test_throws ErrorException fastcholesky(I)
-        @test_throws ErrorException fastcholesky!(I)
+        @test fastcholesky(I) ≈ I
+        @test fastcholesky!(I) ≈ I
     end
 end
 
