@@ -63,8 +63,8 @@ end
         @test chollogdet(I) ≈ zero
         @test all(cholinv_logdet(one * I) .≈ (one * I, zero))
         @test_throws ArgumentError chollogdet(two * I)
-        @test fastcholesky(I) ≈ I
-        @test fastcholesky!(I) ≈ I
+        @test_throws ErrorException fastcholesky(I)
+        @test_throws ErrorException fastcholesky!(I)
     end
 end
 
@@ -73,7 +73,8 @@ end
 
     for Type in SupportedTypes
         let number = rand(Type)
-            @test fastcholesky(number) === number
+            @test size(fastcholesky(number).L) == (1, 1)
+            @test all(fastcholesky(number).L .≈ sqrt(number))
             @test cholinv(number) ≈ inv(number)
             @test cholsqrt(number) ≈ sqrt(number)
             @test chollogdet(number) ≈ logdet(number)

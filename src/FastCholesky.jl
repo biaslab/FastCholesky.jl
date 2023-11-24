@@ -32,13 +32,21 @@ function fastcholesky(input::AbstractMatrix)
     # The `PositiveFactorizations.default_δ` should small enough in majority of the cases
     return cholesky(PositiveFactorizations.Positive, Hermitian(input), tol = PositiveFactorizations.default_δ(input))
 end
+
+fastcholesky(input::Number) = cholesky(input)
 fastcholesky(input::Diagonal) = cholesky(input)
 fastcholesky(input::Hermitian) = cholesky(PositiveFactorizations.Positive, input)
-fastcholesky(input::Number) = input
-fastcholesky!(input::Number) = input
 
-fastcholesky(x::UniformScaling) = sqrt(x.λ) * I
-fastcholesky!(x::UniformScaling) = sqrt(x.λ) * I
+function fastcholesky(x::UniformScaling)
+    return error(
+        "`fastcholesky` is not defined for `UniformScaling`. The shape is not determined."
+    )
+end
+function fastcholesky!(x::UniformScaling)
+    return error(
+        "`fastcholesky!` is not defined for `UniformScaling`. The shape is not determined."
+    )
+end
 
 function fastcholesky(input::Matrix{<:BlasFloat})
     C = fastcholesky!(copy(input))
