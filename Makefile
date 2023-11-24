@@ -13,6 +13,8 @@ benchmark: ## Run benchmarks
 	julia -e '\
     import Pkg; \
     Pkg.activate("benchmarks/speed"); \
+    Pkg.develop(Pkg.PackageSpec(path=pwd())); \
+    Pkg.instantiate(); \
     using PkgBenchmark, FastCholesky, Dates; \
     results = benchmarkpkg("FastCholesky"; script="benchmarks/speed/benchmarks.jl"); \
     export_markdown("benchmarks/speed/exports/benchmark-"*Dates.format(Dates.now(), "yyyy-mm-ddTHH-MM")*".md", results); \
