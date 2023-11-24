@@ -28,6 +28,10 @@
                     @test all(cholinv_logdet(input) .≈ (inv(input), logdet(input)))
                     @test cholsqrt(input) * cholsqrt(input)' ≈ input
 
+                    if Type <: LinearAlgebra.BlasFloat && input isa Matrix 
+                        @test collect(fastcholesky(input).L) ≈ collect(fastcholesky!(deepcopy(input)).L)
+                    end
+
                     # `sqrt` does not work on `BigFloat` matrices
                     if Type !== BigFloat
                         @test cholsqrt(input) * cholsqrt(input)' ≈ sqrt(input) * sqrt(input)'
@@ -69,7 +73,8 @@ end
 
     for Type in SupportedTypes
         let number = rand(Type)
-            @test fastcholesky(number) === number
+            @test size(fastcholesky(number).L) == (1, 1)
+            @test all(fastcholesky(number).L .≈ sqrt(number))
             @test cholinv(number) ≈ inv(number)
             @test cholsqrt(number) ≈ sqrt(number)
             @test chollogdet(number) ≈ logdet(number)

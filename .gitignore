@@ -1,6 +1,10 @@
 *.jl.*.cov
 *.jl.cov
 *.jl.mem
-/Manifest.toml
+Manifest.toml
 /docs/Manifest.toml
 /docs/build/
+
+.vscode
+benchmark
+benchmarks/**/exports

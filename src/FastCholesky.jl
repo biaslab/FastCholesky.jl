@@ -32,9 +32,10 @@ function fastcholesky(input::AbstractMatrix)
     # The `PositiveFactorizations.default_δ` should small enough in majority of the cases
     return cholesky(PositiveFactorizations.Positive, Hermitian(input), tol = PositiveFactorizations.default_δ(input))
 end
+
+fastcholesky(input::Number) = cholesky(input)
 fastcholesky(input::Diagonal) = cholesky(input)
 fastcholesky(input::Hermitian) = cholesky(PositiveFactorizations.Positive, input)
-fastcholesky(input::Number) = input
 
 function fastcholesky(x::UniformScaling)
     return error(
