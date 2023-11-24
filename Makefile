@@ -16,6 +16,7 @@ benchmark: ## Run benchmarks
     Pkg.develop(Pkg.PackageSpec(path=pwd())); \
     Pkg.instantiate(); \
     using PkgBenchmark, FastCholesky, Dates; \
+    Base.Filesystem.mkpath("benchmarks/speed/exports/"); \
     results = benchmarkpkg("FastCholesky"; script="benchmarks/speed/benchmarks.jl"); \
     export_markdown("benchmarks/speed/exports/benchmark-"*Dates.format(Dates.now(), "yyyy-mm-ddTHH-MM")*".md", results); \
     Base.Filesystem.rm("benchmark"; force=true, recursive=true)'
