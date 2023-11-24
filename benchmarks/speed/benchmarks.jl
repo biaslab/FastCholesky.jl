@@ -2,21 +2,31 @@ using BenchmarkTools, LinearAlgebra
 using FastCholesky
 
 const SUITE = BenchmarkGroup()
+const BenchmarkFloatTypes = (Float32, Float64, BigFloat)
+
+for T in BenchmarkFloatTypes
+    SUITE[string(T)] = BenchmarkGroup()
+    SUITE[string(T)]["Number"] = BenchmarkGroup()
+    SUITE[string(T)]["Matrix"] = BenchmarkGroup()
+    SUITE[string(T)]["Diagonal"] = BenchmarkGroup()
+end
 
 # general benchmarks
-for T in (Float32, Float64, BigFloat)
+for T in BenchmarkFloatTypes
 
     # number
     a = rand(T)
-    
-    SUITE["fastcholesky-"  *"Type:"*string(T)] = @benchmarkable fastcholesky($a)
-    SUITE["fastcholesky!-" *"Type:"*string(T)] = @benchmarkable fastcholesky!($a)
-    SUITE["cholinv-"       *"Type:"*string(T)] = @benchmarkable cholinv($a)
-    SUITE["cholsqrt-"      *"Type:"*string(T)] = @benchmarkable cholsqrt($a)
-    SUITE["chollogdet-"    *"Type:"*string(T)] = @benchmarkable chollogdet($a)
-    SUITE["cholinv_logdet-"*"Type:"*string(T)] = @benchmarkable cholinv_logdet($a)
+
+    SUITE[string(T)]["Number"]["fastcholesky"] = @benchmarkable fastcholesky($a)
+    SUITE[string(T)]["Number"]["fastcholesky!"] = @benchmarkable fastcholesky!($a)
+    SUITE[string(T)]["Number"]["cholinv"] = @benchmarkable cholinv($a)
+    SUITE[string(T)]["Number"]["cholsqrt"] = @benchmarkable cholsqrt($a)
+    SUITE[string(T)]["Number"]["chollogdet"] = @benchmarkable chollogdet($a)
+    SUITE[string(T)]["Number"]["cholinv_logdet"] = @benchmarkable cholinv_logdet($a)
 
     for dim in (2, 5, 10, 20, 50, 100, 200, 500)
+
+        SUITE[string(T)]["Matrix"]["dim:" * string(dim)] = BenchmarkGroup()
 
         # Skip `BigFloat` benchmarks for large dimensions because they are extremely slow
         if (T == BigFloat) && (dim >= 100)
@@ -30,33 +40,35 @@ for T in (Float32, Float64, BigFloat)
 
         # The inplace version works only for `Matrix{<:BlasFloat}`
         if T <: LinearAlgebra.BlasFloat
-            SUITE["fastcholesky!-" *"Type:Matrix{"*string(T)*"}-Dim:"*string(dim)] = @benchmarkable fastcholesky!($C)
+            SUITE[string(T)]["Matrix"]["dim:" * string(dim)]["fastcholesky!"] = @benchmarkable fastcholesky!($C)
         end
 
         # `sqrt` does not work for `BigFloat` inputs
         if T != BigFloat
-            SUITE["cholsqrt-"      *"Type:Matrix{"*string(T)*"}-Dim:"*string(dim)] = @benchmarkable cholsqrt($B)
+            SUITE[string(T)]["Matrix"]["dim:" * string(dim)]["cholsqrt"] = @benchmarkable cholsqrt($B)
         end
 
         # define benchmarks
-        SUITE["fastcholesky-"  *"Type:Matrix{"*string(T)*"}-Dim:"*string(dim)] = @benchmarkable fastcholesky($B)
-        SUITE["cholinv-"       *"Type:Matrix{"*string(T)*"}-Dim:"*string(dim)] = @benchmarkable cholinv($B)
-        SUITE["chollogdet-"    *"Type:Matrix{"*string(T)*"}-Dim:"*string(dim)] = @benchmarkable chollogdet($B)
-        SUITE["cholinv_logdet-"*"Type:Matrix{"*string(T)*"}-Dim:"*string(dim)] = @benchmarkable cholinv_logdet($B)
-        
-        # Diagonal{T} benchmarks
-        SUITE["fastcholesky-"  *"Type:Diagonal{"*string(T)*"}"] = @benchmarkable fastcholesky($(Diagonal(ones(T, dim))))
-        SUITE["cholinv-"       *"Type:Diagonal{"*string(T)*"}"] = @benchmarkable cholinv($(Diagonal(ones(T, dim))))
-        SUITE["cholsqrt-"      *"Type:Diagonal{"*string(T)*"}"] = @benchmarkable cholsqrt($(Diagonal(ones(T, dim))))
-        SUITE["chollogdet-"    *"Type:Diagonal{"*string(T)*"}"] = @benchmarkable chollogdet($(Diagonal(ones(T, dim))))
-        SUITE["cholinv_logdet-"*"Type:Diagonal{"*string(T)*"}"] = @benchmarkable cholinv_logdet($(Diagonal(ones(T, dim))))
-           
-    end
+        SUITE[string(T)]["Matrix"]["dim:" * string(dim)]["fastcholesky"] = @benchmarkable fastcholesky($B)
+        SUITE[string(T)]["Matrix"]["dim:" * string(dim)]["cholinv"] = @benchmarkable cholinv($B)
+        SUITE[string(T)]["Matrix"]["dim:" * string(dim)]["chollogdet"] = @benchmarkable chollogdet($B)
+        SUITE[string(T)]["Matrix"]["dim:" * string(dim)]["cholinv_logdet"] = @benchmarkable cholinv_logdet($B)
 
+        SUITE[string(T)]["Diagonal"]["dim:" * string(dim)] = BenchmarkGroup()
+
+        # Diagonal{T} benchmarks
+        SUITE[string(T)]["Diagonal"]["dim:" * string(dim)]["fastcholesky"]= @benchmarkable fastcholesky($(Diagonal(ones(T, dim))))
+        SUITE[string(T)]["Diagonal"]["dim:" * string(dim)]["cholinv"] = @benchmarkable cholinv($(Diagonal(ones(T, dim))))
+        SUITE[string(T)]["Diagonal"]["dim:" * string(dim)]["cholsqrt"] = @benchmarkable cholsqrt($(Diagonal(ones(T, dim))))
+        SUITE[string(T)]["Diagonal"]["dim:" * string(dim)]["chollogdet"] = @benchmarkable chollogdet($(Diagonal(ones(T, dim))))
+        SUITE[string(T)]["Diagonal"]["dim:" * string(dim)]["cholinv_logdet"] = @benchmarkable cholinv_logdet($(Diagonal(ones(T, dim))))
+    end
 end
 
+SUITE["UniformScaling"] = BenchmarkGroup()
+
 # Uniformscaling benchmarks
-SUITE["fastcholesky-"  *"Type:UniformScaling"] = @benchmarkable fastcholesky($(3.0I))
-SUITE["fastcholesky!-" *"Type:UniformScaling"] = @benchmarkable fastcholesky!($(3.0I))
-SUITE["cholinv-"       *"Type:UniformScaling"] = @benchmarkable cholinv($(3.0I))
-SUITE["cholsqrt-"      *"Type:UniformScaling"] = @benchmarkable cholsqrt($(3.0I))
+SUITE["UniformScaling"]["fastcholesky"] = @benchmarkable fastcholesky($(3.0I))
+SUITE["UniformScaling"]["fastcholesky!"] = @benchmarkable fastcholesky!($(3.0I))
+SUITE["UniformScaling"]["cholinv"] = @benchmarkable cholinv($(3.0I))
+SUITE["UniformScaling"]["cholsqrt"] = @benchmarkable cholsqrt($(3.0I))
