@@ -28,6 +28,10 @@
                     @test all(cholinv_logdet(input) .≈ (inv(input), logdet(input)))
                     @test cholsqrt(input) * cholsqrt(input)' ≈ input
 
+                    if Type <: LinearAlgebra.BlasFloat && input isa Matrix 
+                        @test collect(fastcholesky(input).L) ≈ collect(fastcholesky!(deepcopy(input)).L)
+                    end
+
                     # `sqrt` does not work on `BigFloat` matrices
                     if Type !== BigFloat
                         @test cholsqrt(input) * cholsqrt(input)' ≈ sqrt(input) * sqrt(input)'

@@ -18,16 +18,29 @@ for T in (Float32, Float64, BigFloat)
 
     for dim in (2, 5, 10, 20, 50, 100, 200, 500)
 
+        # Skip `BigFloat` benchmarks for large dimensions because they are extremely slow
+        if (T == BigFloat) && (dim >= 100)
+            continue
+        end
+
         # generate positive-definite matrix of specified dimensions
         A = randn(T, dim, dim)
         B = A * A' + dim * I(dim)
         C = similar(B)
 
+        # The inplace version works only for `Matrix{<:BlasFloat}`
+        if T <: LinearAlgebra.BlasFloat
+            SUITE["fastcholesky!-" *"Type:Matrix{"*string(T)*"}-Dim:"*string(dim)] = @benchmarkable fastcholesky!($C)
+        end
+
+        # `sqrt` does not work for `BigFloat` inputs
+        if T != BigFloat
+            SUITE["cholsqrt-"      *"Type:Matrix{"*string(T)*"}-Dim:"*string(dim)] = @benchmarkable cholsqrt($B)
+        end
+
         # define benchmarks
         SUITE["fastcholesky-"  *"Type:Matrix{"*string(T)*"}-Dim:"*string(dim)] = @benchmarkable fastcholesky($B)
-        SUITE["fastcholesky!-" *"Type:Matrix{"*string(T)*"}-Dim:"*string(dim)] = @benchmarkable fastcholesky!($C)
         SUITE["cholinv-"       *"Type:Matrix{"*string(T)*"}-Dim:"*string(dim)] = @benchmarkable cholinv($B)
-        SUITE["cholsqrt-"      *"Type:Matrix{"*string(T)*"}-Dim:"*string(dim)] = @benchmarkable cholsqrt($B)
         SUITE["chollogdet-"    *"Type:Matrix{"*string(T)*"}-Dim:"*string(dim)] = @benchmarkable chollogdet($B)
         SUITE["cholinv_logdet-"*"Type:Matrix{"*string(T)*"}-Dim:"*string(dim)] = @benchmarkable cholinv_logdet($B)
         
